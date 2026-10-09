@@ -1,0 +1,16 @@
+{
+  "name": "billing-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Formats billing lines for the customer portal",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@fxtcorp/money": "^1.8.0",
+    "fxt-slugkit": "^2.3.1"
+  }
+}
