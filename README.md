@@ -37,8 +37,11 @@ The install id is `<plugin>@devsantara`. To pick up a new release later, run `cl
 
 ```text
 .
+├── .changeset/                 # Changesets config and pending changesets
 ├── .claude-plugin/
 │   └── marketplace.json        # Catalog listing every plugin in plugins/
+├── scripts/
+│   └── sync-plugin-versions.js # Copies package.json versions into plugin.json
 └── plugins/
     └── <plugin>/               # Plugin root
         ├── .claude-plugin/
@@ -47,6 +50,8 @@ The install id is `<plugin>@devsantara`. To pick up a new release later, run `cl
         ├── agents/<name>.md
         ├── hooks/hooks.json
         ├── .mcp.json
+        ├── package.json        # Name and version, for Changesets only
+        ├── CHANGELOG.md        # Generated on release
         └── README.md
 ```
 
@@ -63,9 +68,19 @@ Only `plugin.json` belongs in a plugin's `.claude-plugin/`. Components saved the
 
 ## Adding a plugin
 
-1. Create `plugins/<plugin>/.claude-plugin/plugin.json` with at least `name`, `version`, `description`, and `author`. Use a kebab-case `name` and treat it as permanent, because installs are recorded under it.
-2. Add the plugin's components and a `README.md` at the plugin root.
-3. Add an entry to `plugins` in `.claude-plugin/marketplace.json`. The entry `name` must match the `name` in `plugin.json`, and `source` is the path from the repository root:
+1. Create `plugins/<plugin>/.claude-plugin/plugin.json` with at least `name`, `version`, `description`, and `author`. Start `version` at `0.0.0`. Use a kebab-case `name` and treat it as permanent, because installs are recorded under it.
+2. Create `plugins/<plugin>/package.json` with the same `name` and `version`, so [Changesets](#releasing) can version the plugin:
+
+   ```json
+   {
+     "name": "<plugin>",
+     "version": "0.0.0",
+     "private": true
+   }
+   ```
+
+3. Add the plugin's components and a `README.md` at the plugin root.
+4. Add an entry to `plugins` in `.claude-plugin/marketplace.json`. The entry `name` must match the `name` in `plugin.json`, and `source` is the path from the repository root:
 
    ```json
    {
@@ -75,9 +90,16 @@ Only `plugin.json` belongs in a plugin's `.claude-plugin/`. Components saved the
    }
    ```
 
-4. List the plugin under [Plugins](#plugins) above.
+5. List the plugin under [Plugins](#plugins) above.
+6. Add a changeset for the first release with `pnpm changeset`, for example a `minor` bump with the summary "Initial release" to ship `0.1.0`. Without it, the plugin is tagged and released as `0.0.0`.
 
 ## Development
+
+Install the release tooling once with [pnpm](https://pnpm.io):
+
+```bash
+pnpm install
+```
 
 Load one plugin's working copy for a session, without installing it:
 
@@ -102,7 +124,22 @@ If a component doesn't show up, check the **Errors** tab of `/plugin`, or run `c
 
 ## Releasing
 
-Plugins are versioned independently. `version` in a plugin's `plugin.json` pins installed copies: users only receive changes when it changes. To release a plugin, bump its `version`, run the validation above, and push. Never change a published plugin's `name`; change `displayName` for a different label.
+Plugins are versioned independently with [Changesets](https://changesets.dev). `version` in a plugin's `plugin.json` pins installed copies: users only receive changes when it changes. Never edit it by hand. Changesets bumps the plugin's `package.json`, and `scripts/sync-plugin-versions.js` copies that version into `plugin.json`.
+
+1. In the pull request that changes a plugin, add a changeset. Pick the plugin, the bump type, and write a summary for the changelog:
+
+   ```bash
+   pnpm changeset
+   ```
+
+   Commit the generated `.changeset/*.md` file with the change. A change that needs no release, such as docs or tooling, needs no changeset.
+
+2. When the pull request merges to `main`, the [Release](./.github/workflows/release.yml) workflow opens or updates a `chore(release): version plugins` pull request. It bumps each changed plugin's version, updates its `CHANGELOG.md`, and deletes the consumed changesets.
+3. Merging that pull request releases the plugins: the workflow tags each one as `<plugin>@<version>` and creates a GitHub release from its changelog entry.
+
+To cut the version bump locally instead, run `pnpm run version` with a `GITHUB_TOKEN` set (the changelog links pull requests and commits), then commit the result.
+
+Never change a published plugin's `name`; change `displayName` for a different label.
 
 ## License
 
