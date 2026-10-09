@@ -1,0 +1,103 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions: {} # each job declares only the permissions it needs
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  select-mode:
+    name: Select mode
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      mode: ${{ steps.select-mode.outputs.mode }}
+    permissions:
+      contents: read # to check out repo (actions/checkout)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6.1.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false # avoid cache poisoning in release jobs
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Select Changesets mode
+        id: select-mode
+        uses: changesets/action/select-mode@v2.1.2
+
+  version:
+    name: Version
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'version'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # to push the version commit (changesets/action/version)
+      pull-requests: write # to create or update the version PR (changesets/action/version)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6.1.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false # avoid cache poisoning in release jobs
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Create or update version PR
+        uses: changesets/action/version@v2.1.2
+        with:
+          # Bumps package.json, writes CHANGELOG.md, then syncs plugin.json
+          script: pnpm run version
+          pr-title: 'chore(release): version plugins'
+          commit-message: 'chore(release): version plugins'
+        env:
+          GITHUB_TOKEN: ${{ github.token }} # for @changesets/changelog-github to link PRs and commits
+
+  publish:
+    name: Tag and release
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'publish'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # to push git tags and create GitHub releases (changesets/action/publish)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6.1.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false # avoid cache poisoning in release jobs
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check plugin manifests match released versions
+        run: pnpm run version:check
+      - name: Tag plugins and create GitHub releases
+        uses: changesets/action/publish@v2.1.2
+        with:
+          # Every plugin is private, so this only creates <plugin>@<version> tags
+          script: pnpm run release
+          push-git-tags: true
+          create-github-releases: true
