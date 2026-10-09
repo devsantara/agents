@@ -10,7 +10,7 @@
   "type": "module",
   "scripts": {
     "changeset": "changeset",
-    "version": "changeset version && node scripts/sync-plugin-versions.js && pnpm install --lockfile-only --no-frozen-lockfile",
+    "version": "changeset version && node scripts/sync-plugin-versions.js",
     "version:check": "node scripts/sync-plugin-versions.js --check",
     "release": "changeset publish"
   },
