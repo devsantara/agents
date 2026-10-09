@@ -1,0 +1,22 @@
+{
+  "name": "@devsantara/agents",
+  "private": true,
+  "description": "Plugins for Claude, built and maintained by Devsantara",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devsantara/agents.git"
+  },
+  "type": "module",
+  "scripts": {
+    "changeset": "changeset",
+    "version": "changeset version && node scripts/sync-plugin-versions.js",
+    "version:check": "node scripts/sync-plugin-versions.js --check",
+    "release": "changeset publish"
+  },
+  "packageManager": "pnpm@12.10.1",
+  "devDependencies": {
+    "@changesets/changelog-github": "^1.0.1",
+    "@changesets/cli": "^3.0.3"
+  }
+}
