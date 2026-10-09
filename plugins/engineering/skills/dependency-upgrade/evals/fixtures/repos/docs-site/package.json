@@ -1,0 +1,15 @@
+{
+  "name": "docs-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Renders help-center pages from Markdown",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "fxt-mdlite": "^1.2.0"
+  }
+}

@@ -14,7 +14,9 @@
 
 This repository is a Claude Code plugin marketplace. Each plugin lives in its own directory under `plugins/` and is installed separately.
 
-No plugins have been published yet. See [Adding a plugin](#adding-a-plugin).
+| Plugin                                 | Description                                                 |
+| :------------------------------------- | :---------------------------------------------------------- |
+| [`engineering`](./plugins/engineering) | A directory of engineering tools for day-to-day development |
 
 ## Install
 
@@ -113,7 +115,7 @@ Or load every plugin in the repository at once:
 claude --plugin-dir ./plugins
 ```
 
-After editing files, run `/reload-plugins` in that session to apply the changes. Validate the marketplace and each plugin you changed before every commit. Until the first plugin is added, the marketplace check reports `Marketplace has no plugins defined`, which `--strict` treats as a failure:
+After editing files, run `/reload-plugins` in that session to apply the changes. Validate the marketplace and each plugin you changed before every commit:
 
 ```bash
 claude plugin validate --strict .

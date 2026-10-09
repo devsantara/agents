@@ -1,0 +1,16 @@
+{
+  "name": "orders-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Builds invoices and receipts for orders",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "fxt-datefmt": "^1.4.2",
+    "fxt-slugkit": "^2.3.1"
+  }
+}

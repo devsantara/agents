@@ -5,5 +5,11 @@
     "name": "Devsantara",
     "url": "https://github.com/devsantara"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "engineering",
+      "source": "./plugins/engineering",
+      "description": "A directory of engineering tools for day-to-day development"
+    }
+  ]
 }

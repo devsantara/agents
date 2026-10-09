@@ -1,0 +1,15 @@
+{
+  "name": "session-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Keeps user sessions in memory",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "fxt-cache": "^2.2.0"
+  }
+}

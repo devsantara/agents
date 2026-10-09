@@ -1,0 +1,15 @@
+{
+  "name": "jobs-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Runs background jobs with retries",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "fxt-retry": "^4.1.0"
+  }
+}

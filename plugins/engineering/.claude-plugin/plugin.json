@@ -1,0 +1,13 @@
+{
+  "name": "engineering",
+  "displayName": "devsantara-engineering",
+  "description": "A directory of engineering tools for day-to-day development",
+  "version": "0.0.0",
+  "author": {
+    "name": "Devsantara",
+    "url": "https://github.com/devsantara"
+  },
+  "homepage": "https://github.com/devsantara/agents/tree/main/plugins/engineering",
+  "repository": "https://github.com/devsantara/agents",
+  "license": "MIT"
+}
