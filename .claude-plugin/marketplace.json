@@ -1,0 +1,9 @@
+{
+  "name": "devsantara",
+  "description": "Plugins for Claude, built and maintained by Devsantara",
+  "owner": {
+    "name": "Devsantara",
+    "url": "https://github.com/devsantara"
+  },
+  "plugins": []
+}
